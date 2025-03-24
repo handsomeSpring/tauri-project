@@ -14,7 +14,7 @@ jobs:
 
      - name: 安装依赖 和 项目打包
        run: 
-         npm run install
+         npm install
          npm run build
 
      - name: 部署
