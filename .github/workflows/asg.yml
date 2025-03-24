@@ -11,11 +11,15 @@ jobs:
     steps:
       - name: 读取仓库内容
         uses: actions/checkout@v4
-
-      - name: 安装依赖 和 项目打包
+      - name: 下载PNPM
+        run:
+          npm install pnpm
+          
+      - name: 安装依赖和项目打包
         run: |
-          npm install
-          npm run tauri-build
+          
+          pnpm install
+          pnpm run tauri-build
 
       - name: 部署
         uses: JamesIves/github-pages-deploy-action@v4
