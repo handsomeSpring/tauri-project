@@ -45,8 +45,8 @@ const stepNextDis = computed(() => {
     return props.nowProcess === 4;
 });
 
-const handleNext = () => {
-    const { messageText, flag } = props.validateFunction();
+const handleNext = async () => {
+    const { messageText, flag } = await props.validateFunction();
     if (!flag) return message.error(messageText);
     emits('nextClick');
 }

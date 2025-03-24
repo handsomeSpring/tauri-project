@@ -13,7 +13,7 @@ export const getNextComponent = (data: any, key: string): Component => {
   if (key === 'extractMode') {
     return threeChoose
   }
-  if (key === 'last') {
+  if (key === 'options') {
     if (data === 'Card') {
       return lastChooseCard;
     } else {

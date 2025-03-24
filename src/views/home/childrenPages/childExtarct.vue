@@ -25,14 +25,8 @@
     </n-space>
   </div>
   <div class="component__container">
-    <component 
-       :is="extractObject.component"
-       :nowProcess="nowProcess"
-       :extractObject="extractObject"
-       :readOnly="current < nowProcess"
-       @nextClick="handleNext"
-       @preClick="handlePre"
-     >
+    <component :is="extractObject.component" :nowProcess="nowProcess" :extractObject="extractObject"
+      :readOnly="current < nowProcess" @nextClick="handleNext" @preClick="handlePre">
     </component>
   </div>
 </template>
@@ -46,17 +40,17 @@ import { getNextComponent } from '@/views/extractThing/hooks.ts';
 const current = ref<number>(1);
 // 目前已经进行了的进度
 const nowProcess = ref<number>(1);
-interface ExtractOptions{
-   extractLabel:string | null //抽取标题
-   extractNumber:number | null //抽取人数
-   groupNumber:number | null //分组
+interface ExtractOptions {
+  extractLabel: string | null //抽取标题
+  extractNumber: number | null //抽取人数
+  groupNumber: number | null //分组
 }
 interface ExtractObject {
   component: Component
   extractMode: null | string
   gameMode: null | string
   data: any[]
-  options:ExtractOptions
+  options: ExtractOptions
   historyComponent: Component[]
 }
 const extractObject = reactive<ExtractObject>({
@@ -64,10 +58,10 @@ const extractObject = reactive<ExtractObject>({
   extractMode: null,
   gameMode: null,
   data: [],
-  options:{
-    extractLabel:null,
-    extractNumber:null,
-    groupNumber:null
+  options: {
+    extractLabel: null,
+    extractNumber: null,
+    groupNumber: null
   },
   historyComponent: [firstChoose]
 });
@@ -88,7 +82,11 @@ const handleNext = (data: any, key: keyof ExtractObject) => {
   const nextComponent = getNextComponent(data, key);
   extractObject.component = nextComponent;
   extractObject.historyComponent.push(nextComponent);
-  extractObject[key] = data;
+  if (data instanceof Object && extractObject[key] instanceof Object) {
+    Object.assign(extractObject[key], data)
+  }else{
+    extractObject[key] = data;
+  }
   nowProcess.value++;
   current.value = nowProcess.value;
 }

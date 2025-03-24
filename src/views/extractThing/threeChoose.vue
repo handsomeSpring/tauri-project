@@ -1,6 +1,7 @@
 <template>
     <div class="form__container">
-        <n-form :model="form" label-placement="left" label-align="right" label-width="120">
+        <n-form ref="formRef" :model="form" :rules="rules" label-placement="left" label-align="right" label-width="120"
+            require-mark-placement="right-hanging">
             <n-grid :cols="24" :x-gap="24">
                 <n-form-item-gi :span="12" label="抽签赛制" path="gameMode">
                     {{ computedGameMode(form.gameMode) }}
@@ -22,6 +23,17 @@
                         <n-input v-model:value="groupEvenryPerson" disabled :style="{ width: '40%' }" />
                     </n-input-group>
                 </n-form-item-gi>
+                <n-form-item-gi :span="24" label="添加战队">
+                    <n-input-group>
+                        <n-input v-model:value="teamName" :style="{ width: '33%' }" placeholder="请输入战队名" />
+                        <n-button type="primary" ghost>
+                            单个添加
+                        </n-button>
+                        <n-button type="info">
+                            全局导入
+                        </n-button>
+                    </n-input-group>
+                </n-form-item-gi>
             </n-grid>
         </n-form>
     </div>
@@ -30,6 +42,7 @@
 </template>
 
 <script setup lang='ts'>
+import type { FormInst ,FormItemRule} from 'naive-ui';
 const emits = defineEmits(['nextClick', 'preClick']);
 const props = defineProps({
     nowProcess: {
@@ -52,6 +65,7 @@ interface ExtractOptions {
     gameMode: 'Group' | 'Elimi' | 'Ring' | null
     extractMode: 'Card' | 'Ballot' | null
 }
+const formRef = ref<FormInst | null>(null);
 const form = reactive<ExtractOptions>({
     extractLabel: null,
     extractNumber: null,
@@ -59,6 +73,40 @@ const form = reactive<ExtractOptions>({
     gameMode: null,
     extractMode: null
 })
+const teamName = ref('');
+const rules = {
+    gameMode: {
+        required: true,
+        message: '请选择游戏赛制',
+        trigger: ['input', 'blur']
+    },
+    extractMode: {
+        required: true,
+        message: '请选择抽签模式',
+        trigger: ['input', 'blur']
+    },
+    extractLabel: {
+        required: true,
+        message: '请输入抽取标题',
+        trigger: ['input', 'blur']
+    },
+    extractNumber: {
+        required: true,
+        message: '请输入抽取战队数量',
+        trigger: 'blur',
+        validator(rule: FormItemRule, value: number) {
+            return value && value > 0
+        },
+    },
+    groupNumber: {
+        required: true,
+        message: '请输入组数',
+        trigger: 'blur',
+        validator(rule: FormItemRule, value: number) {
+            return value && value > 0
+        },
+    }
+}
 const groupEvenryPerson = computed(() => {
     if (!form.extractNumber || !form.groupNumber) {
         return '自动计算';
@@ -79,10 +127,19 @@ const init = () => {
         })
 }
 init();
-const validator = (): ReturnValidator => {
-    return {
-        flag: true,
-        messageText: 'ok'
+
+const validator = async (): Promise<ReturnValidator> => {
+    try {
+        await formRef.value?.validate();
+        return {
+            flag: true,
+            messageText: 'ok'
+        }
+    } catch (error) {
+        return {
+            flag: false,
+            messageText: '情完整填写表单'
+        }
     }
 }
 // 计算比赛模式
@@ -105,7 +162,7 @@ const computedExtractMode = (mode: 'Card' | 'Ballot' | null): string => {
     return mapList[mode];
 }
 const handleNext = () => {
-    emits('nextClick', form, 'extractMode');
+    emits('nextClick', form, 'options');
 }
 const handlePre = () => {
     emits('preClick');

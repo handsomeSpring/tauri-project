@@ -54,13 +54,14 @@
   },
   "plugins": {
     "updater": {
+      "active":true,
       "windows": {
         "installMode": "passive"
       },
+      "dialog":true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEVGNTNEODc3NUI0OEE1QTEKUldTaHBVaGJkOWhUN3lvWms0di9udi9PY1FnWG1NalZTMWRwTFpyRDNkQnFnK1VRTlhpMkVtV1YK",
       "endpoints": [
-        "https://releases.myapp.com/{{target}}/{{arch}}/{{current_version}}",
-        "https://github.com/user/repo/releases/latest/download/latest.json"
+        "https://github.com/handsomeSpring/tauri-project/releases/download/v0.1.0/latest.json"
       ]
     }
   }
